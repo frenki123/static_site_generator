@@ -27,7 +27,7 @@ class TestLeafNode(unittest.TestCase):
 
     def test4(self):
         with self.assertRaises(ValueError) as context:
-            node = LeafNode(None, None) 
+            node = LeafNode(None, None) # pyright: ignore[reportArgumentType]
             _ = node.to_html()
         self.assertEqual(str(context.exception), "All leaf nodes must have a value")
 if __name__ == "__main__":
