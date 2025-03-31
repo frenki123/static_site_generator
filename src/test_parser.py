@@ -1,10 +1,9 @@
 import unittest
 
-from parser import split_nodes_delimiter
+from parser import extract_markdown_images, split_nodes_delimiter
 from textnode import TextNode, TextType
 
 class TestSplitNodesDelimiter(unittest.TestCase):
-
     def test_bold(self):
         n = TextNode("This is **bold** text", TextType.TEXT)
         res = split_nodes_delimiter([n], "**", TextType.BOLD)
@@ -41,7 +40,33 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             _ = split_nodes_delimiter([n], "`", TextType.CODE)
         self.assertEqual(str(context.exception), "invalid markdown syntax")
 
+class TestExtractMarkdownImages(unittest.TestCase):
+    def test_1(self):
+        txt = "![rick roll](https://i.imgur.com/aKaOqIh.gif)"
+        res = extract_markdown_images(txt)
+        alt = res[0][0]
+        url = res[0][1]
+        self.assertEqual(len(res), 1)
+        self.assertEqual(alt, "rick roll")
+        self.assertEqual(url, "https://i.imgur.com/aKaOqIh.gif")
 
+    def test_2(self):
+        txt = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        res = extract_markdown_images(txt)
+        self.assertEqual(len(res), 2)
+        alt1 = res[0][0]
+        url1 = res[0][1]
+        self.assertEqual(alt1, "rick roll")
+        self.assertEqual(url1, "https://i.imgur.com/aKaOqIh.gif")
+        alt2 = res[1][0]
+        url2 = res[1][1]
+        self.assertEqual(alt2, "obi wan")
+        self.assertEqual(url2, "https://i.imgur.com/fJRm4Vk.jpeg")
+
+    def test_nothing(self):
+        txt = "This is text with a ![](https://i.imgur.com/aKaOqIh.gif) and ![obi wan]()"
+        res = extract_markdown_images(txt)
+        self.assertEqual(len(res), 0)
 
 if __name__ == "__main__":
     _ = unittest.main()
