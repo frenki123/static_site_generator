@@ -63,10 +63,14 @@ class TestExtractMarkdownImages(unittest.TestCase):
         self.assertEqual(alt2, "obi wan")
         self.assertEqual(url2, "https://i.imgur.com/fJRm4Vk.jpeg")
 
-    def test_nothing(self):
-        txt = "This is text with a ![](https://i.imgur.com/aKaOqIh.gif) and ![obi wan]()"
+    def test_empty(self):
+        txt = "This is text with a ![](https://i.imgur.com/aKaOqIh.gif) and ![obi wan]() [rick roll](https://i.imgur.com/aKaOqIh.gif)"
         res = extract_markdown_images(txt)
-        self.assertEqual(len(res), 0)
+        self.assertEqual(len(res), 2)
+        alt1 = res[0][0]
+        self.assertEqual(alt1, "")
+        url2 = res[1][1]
+        self.assertEqual(url2, "")
 
 if __name__ == "__main__":
     _ = unittest.main()
