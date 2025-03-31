@@ -34,14 +34,14 @@ def extract_markdown_images(text:str) -> list[tuple[str,str]]:
     return matches
 
 def extract_markdown_links(text:str) -> list[tuple[str,str]]:
-    re_pattern = re.compile(r"\[(?P<alt>.+?)\]\((?P<url>.+?)\)")
+    re_pattern = re.compile(r"\[(?P<text>.*?)\]\((?P<url>.*?)\)")
     matches:list[tuple[str,str]] = []
     for m in re.finditer(re_pattern, text):
-        alt = m.group("alt")
-        if not isinstance(alt, str):
-            raise Exception("Invalid image syntax: missing alt text")
+        txt = m.group("text")
+        if not isinstance(txt, str):
+            raise Exception("Invalid link syntax")
         url = m.group("url")
         if not isinstance(url, str):
-            raise Exception("Invalid image syntax: missing url")
-        matches.append((alt, url))
+            raise Exception("Invalid link syntax")
+        matches.append((txt, url))
     return matches
