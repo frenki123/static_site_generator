@@ -26,7 +26,6 @@ class HTMLNode:
 
 class LeafNode(HTMLNode):
     def __init__(self, tag: str|None, value: str,  props: dict[str, str] | None = None):
-        print(f"Passed value {value}")
         super().__init__(tag, value, None, props)
 
     @override
@@ -39,4 +38,17 @@ class LeafNode(HTMLNode):
             return f'<{self.tag}>{self.value}</{self.tag}>'
         return f'<{self.tag} {self.props_to_html()}>{self.value}</{self.tag}>'
     
+class ParentNode(HTMLNode):
+    def __init__(self, tag: str, children: list[HTMLNode], props: dict[str,str]|None=None):
+        super().__init__(tag, None, children, props)
 
+    @override
+    def to_html(self) -> str:
+        if self.tag is None:
+            raise ValueError("All parent nodes must have a tag")
+        if self.children is None:
+            raise ValueError("All parent nodes must have a children")
+        res:list[str] = [] 
+        for child in self.children:
+            res.append(child.to_html())
+        return f'<{self.tag}>{"".join(res)}</{self.tag}>'
