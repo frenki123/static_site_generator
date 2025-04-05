@@ -12,6 +12,7 @@ class TextType(Enum):
     LINK = "link"
     IMAGE = "image"
 
+
 class TextNode:
     def __init__(self, text:str, text_type:TextType, url:str|None = None):
         self.text:str = text

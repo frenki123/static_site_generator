@@ -63,7 +63,7 @@ def split_nodes_by_type(nodes:list[TextNode], extract:extractor):
             if len(imgs) == 0:
                 if node.text != "":
                     new_nodes.append(node)
-                    continue
+                continue
             alt, url = imgs[0]
             spliter = f"[{alt}]({url})"
             if text_type == TextType.IMAGE:

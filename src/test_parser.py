@@ -72,6 +72,11 @@ class TestExtractMarkdownImages(unittest.TestCase):
         url2 = res[1][1]
         self.assertEqual(url2, "")
 
+    def test_noimage(self):
+        txt = "NO IMAGE HERE"
+        res = extract_markdown_images(txt)
+        self.assertEqual(len(res), 0)
+
 class TestExtractMarkdownLinks(unittest.TestCase):
     def test_1(self):
         txt = "[rick roll](https://i.imgur.com/aKaOqIh.gif)"

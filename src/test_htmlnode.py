@@ -62,9 +62,9 @@ class TestParentNode(unittest.TestCase):
         c2 = LeafNode("b", "child")
         p1 = ParentNode("p", [c1,c2])
         p2 = ParentNode("p", [p1])
-        p3 = ParentNode("x", [p2])
+        x1 = ParentNode("x", [p2])
         c3 = LeafNode(None, "text")
-        parent_node = ParentNode("div", [c1,c2,p3,c3,p1])
+        parent_node = ParentNode("div", [c1,c2,x1,c3,p1])
         self.assertEqual(parent_node.to_html(), 
         "<div><span>child</span><b>child</b><x><p><p><span>child</span><b>child</b></p></p></x>text<p><span>child</span><b>child</b></p></div>")
 
