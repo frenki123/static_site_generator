@@ -1,18 +1,20 @@
-from ntpath import isfile
 import os
 import shutil
+import sys
 
 from converter import markdown_to_html_node
 from parser import extract_title
 
-def copy_files(src:str, des:str):
-    if not os.path.exists(src) or not os.path.exists(des):
-        raise Exception("Not valid filepaths")
+def clean_dir(des:str):
+    if not os.path.exists(des):
+        os.mkdir(des)
+        return
     shutil.rmtree(des)
     os.mkdir(des)
-    copy_tree(src, des)
 
-def copy_tree(src:str, des:str):
+def copy_static_files(src:str, des:str):
+    if not os.path.exists(src) or not os.path.exists(des):
+        raise Exception("Not valid filepaths")
     if os.path.isfile(src):
         shutil.copy(src, des)
         return
@@ -26,23 +28,23 @@ def copy_tree(src:str, des:str):
             new_des = os.path.join(des, obj)
             os.mkdir(new_des)
             new_src = os.path.join(src,obj)
-            copy_tree(new_src, new_des)
+            copy_static_files(new_src, new_des)
 
-def generate_pages(src_content:str, template:str, dest:str):
+def generate_pages(src_content:str, template:str, dest:str, basepath:str|None):
     if not os.path.exists(src_content) or not os.path.exists(dest) or not os.path.exists(template):
         raise Exception("Not valid filepaths")
     objects = os.listdir(src_content)
     for obj in objects:
         path = os.path.join(src_content, obj)
         if os.path.isfile(path):
-            generate_page(path, template, dest)
+            generate_page(path, template, dest,basepath)
         else:
             new_des = os.path.join(dest, obj)
             os.mkdir(new_des)
             new_src = os.path.join(src_content,obj)
-            generate_pages(new_src, template, new_des)
+            generate_pages(new_src, template, new_des,basepath)
 
-def generate_page(src:str, template:str, des:str):
+def generate_page(src:str, template:str, des:str, basepath:str|None):
     if not os.path.exists(src) or not os.path.exists(des) or not os.path.exists(template):
         raise Exception("Not valid filepaths")
     if not os.path.isfile(src):
@@ -56,6 +58,9 @@ def generate_page(src:str, template:str, des:str):
     title = extract_title(markdown)
     res = template.replace("{{ Title }}", title)
     res = res.replace("{{ Content }}", html)
+    if basepath is not None:
+        res = res.replace('href="/', f'href="{basepath}"')
+        res = res.replace('src="/', f'src="{basepath}"')
     src_filename = os.path.basename(src).split(".")[0]
     res_path = os.path.join(des, src_filename+".html")
     with open(res_path, "w") as f:
@@ -64,8 +69,12 @@ def generate_page(src:str, template:str, des:str):
 
 
 if __name__ == "__main__":
-    copy_files("static", "public")
-    #generate_page("content/index.md", "template.html", "public")
-    generate_pages("content", "template.html", "public")
+    args = sys.argv
+    basepath = None
+    if len(args) > 1:
+        basepath = args[1]
+    clean_dir("docs")
+    copy_static_files("static", "docs")
+    generate_pages("content", "template.html", "docs", basepath)
 
 
