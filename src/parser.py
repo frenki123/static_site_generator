@@ -96,3 +96,12 @@ def markdown_to_blocks(markdown:str) -> list[str]:
     for block in temp_blocks:
         blocks.append(block.strip())
     return blocks
+
+def extract_title(markdown:str) -> str:
+    blocks = markdown_to_blocks(markdown)
+    if len(blocks) < 1:
+        raise Exception("No title")
+    title = blocks[0]
+    if not title.startswith("# "):
+        raise Exception("No title")
+    return title.lstrip("# ")

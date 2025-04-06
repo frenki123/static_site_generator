@@ -64,21 +64,21 @@ def _code_to_htmlnode(text:str) -> HTMLNode:
     return node
 
 def _quote_to_htmlnode(text:str) -> HTMLNode:
-    node = HTMLNode("blockquote")
+    node = ParentNode("blockquote", [])
     node.children = []
     lines = text.split("\n")
     for line in lines:
-        line_nodes = text_to_node(line.lstrip(">"))
+        line_nodes = text_to_node(line.lstrip("> "))
         html_nodes = [n.to_html_node() for n in line_nodes]
         node.children.extend(html_nodes)
     return node
 
 def _unorderd_list_to_htmlnode(text:str) -> HTMLNode:
-    node = HTMLNode("ul")
+    node = ParentNode("ul", [])
     lines = text.split("\n")
     node.children = []
     for line in lines:
-        line_node = HTMLNode("li")
+        line_node = ParentNode("li", [])
         nodes = text_to_node(line.lstrip("- "))
         if len(nodes) > 0:
             line_node.children = [n.to_html_node() for n in nodes]
@@ -86,11 +86,11 @@ def _unorderd_list_to_htmlnode(text:str) -> HTMLNode:
     return node
 
 def _orderd_list_to_htmlnode(text:str) -> HTMLNode:
-    node = HTMLNode("ol")
+    node = ParentNode("ol",[])
     lines = text.split("\n")
     node.children = []
     for line in lines:
-        line_node = HTMLNode("li")
+        line_node = ParentNode("li",[])
         clean_texts = line.split(".",1)
         if len(clean_texts) < 1:
             raise Exception("Invalid orderd list")
