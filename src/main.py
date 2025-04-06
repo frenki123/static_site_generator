@@ -59,8 +59,8 @@ def generate_page(src:str, template:str, des:str, basepath:str|None):
     res = template.replace("{{ Title }}", title)
     res = res.replace("{{ Content }}", html)
     if basepath is not None:
-        res = res.replace('href="/', f'href="{basepath}"')
-        res = res.replace('src="/', f'src="{basepath}"')
+        res = res.replace('href="/', f'href="{basepath}')
+        res = res.replace('src="/', f'src="{basepath}')
     src_filename = os.path.basename(src).split(".")[0]
     res_path = os.path.join(des, src_filename+".html")
     with open(res_path, "w") as f:
